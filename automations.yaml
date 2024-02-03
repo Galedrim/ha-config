@@ -1,0 +1,476 @@
+- id: '1705440749668'
+  alias: 'PC : Eteindre si pas de courant'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - sensor.pc_consommation_actuelle
+    below: 1
+  condition: []
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.pc
+    data: {}
+  mode: single
+- id: '1705440915802'
+  alias: 'PC : Allumer si debout'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.getup_today
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: state
+    entity_id: switch.pc
+    state: 'off'
+  action:
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.pc
+  mode: single
+- id: '1705441264950'
+  alias: 'Mode Vacances : Démarrer Automatiquement'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - person.galedrim
+    from: home
+    to: not_home
+    for:
+      hours: 24
+      minutes: 0
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  action:
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.vacation_mode
+  mode: single
+- id: '1705441394367'
+  alias: 'Mode vacances : Eteindre automatiquement'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - person.galedrim
+    from: not_home
+    to: home
+  condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.vacation_mode
+  mode: single
+- id: '1705441556131'
+  alias: 'Aspirateur : Démarré'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - vacuum.rockrobo
+    from: docked
+    to: cleaning
+  condition: []
+  action:
+  - service: input_datetime.set_datetime
+    metadata: {}
+    data:
+      datetime: '{{ now().isoformat() }}'
+    target:
+      entity_id: input_datetime.vacuum_on
+  mode: single
+- id: '1705441783755'
+  alias: 'Aspirateur : Terminé'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - vacuum.rockrobo
+    from: returning
+    to: docked
+  condition: []
+  action:
+  - service: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.cleaned_today
+  - service: input_datetime.set_datetime
+    metadata: {}
+    data:
+      datetime: '{{ now().isoformat() }}'
+    target:
+      entity_id: input_datetime.vacuum_off
+  mode: single
+- id: '1705441984424'
+  alias: 'Aspirateur : Nettoyer si absent'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - person.galedrim
+    from: home
+    to: not_home
+  - platform: time
+    at: '16:00:00'
+  condition:
+  - condition: time
+    after: '16:00:00'
+    before: '21:00:00'
+  - condition: state
+    entity_id: binary_sensor.vacuum_day
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.cleaned_today
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: state
+    entity_id: person.galedrim
+    state: not_home
+  action:
+  - service: script.1705442251155
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1705442385080'
+  alias: 'Aspirateur : Eteindre automatiquement'
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition:
+  - condition: state
+    entity_id: input_boolean.cleaned_today
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.cleaned_today
+  mode: single
+- id: '1705442543425'
+  alias: 'PC : Terminé'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.pc
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - service: input_datetime.set_datetime
+    metadata: {}
+    data:
+      datetime: '{{ now().isoformat() }}'
+    target:
+      entity_id: input_datetime.pc_off
+  mode: single
+- id: '1705442602863'
+  alias: 'PC : Démarré'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.pc
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: input_datetime.set_datetime
+    metadata: {}
+    data:
+      datetime: '{{ now().isoformat() }}'
+    target:
+      entity_id: input_datetime.pc_on
+  mode: single
+- id: '1705442996063'
+  alias: 'Sortie : Eteindre tout automatiquement'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.motion_detected_in_last_hour
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 1
+      minutes: 0
+      seconds: 0
+  - platform: time_pattern
+    hours: /1
+  condition:
+  - condition: state
+    entity_id: binary_sensor.no_one_home
+    state: 'on'
+  - condition: state
+    entity_id: binary_sensor.anything_on
+    state: 'on'
+  - condition: state
+    entity_id: binary_sensor.someone_in_the_house_in_last_hour
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  action:
+  - service: script.1705443151631
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1705443451025'
+  alias: 'Réveil : Démarrer avec Lumières'
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time")[0:5] == states("sensor.ten_minutes_before_alarm")
+      }}'
+  condition:
+  - condition: state
+    entity_id: input_boolean.alarm_clock
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.getup_today
+    state: 'off'
+  action:
+  - service: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.alarm_clock
+  - service: light.turn_on
+    metadata: {}
+    data:
+      transition: 300
+      brightness: 255
+    target:
+      entity_id: light.lampe_chambre
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - service: script.allumer_reveil
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1705444083342'
+  alias: 'Réveil : Eteindre si debout'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.getup_today
+    to: 'on'
+  condition: []
+  action:
+  - service: media_player.media_stop
+    target:
+      entity_id:
+      - media_player.chambre
+    data: {}
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.chambre_a_coucher
+  mode: single
+- id: '1705444466577'
+  alias: 'Sortie : Allumer lumière si mouvement détecté'
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: 94560330ef87779919f3d612f5bd0018
+    entity_id: 4753e18c2fa8e46a38afd65c07732ec7
+    domain: binary_sensor
+  condition:
+  - condition: sun
+    before: sunrise
+    after: sunset
+  - condition: state
+    entity_id: binary_sensor.motion_detected_in_last_hour
+    state: 'off'
+  action:
+  - service: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.salon
+  mode: single
+- id: '1705445702418'
+  alias: 'Cafetière : Démarrer si debout'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.getup_today
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.coffeemaker
+    state: 'off'
+  - condition: time
+    after: 06:00:00
+    before: '17:00:00'
+  action:
+  - service: switch.toggle
+    target:
+      entity_id:
+      - switch.bot_3481
+    data: {}
+  - service: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.coffeemaker
+  mode: single
+- id: '1705445987483'
+  alias: 'Debout: Eteindre automatiquement'
+  description: ''
+  trigger:
+  - platform: time
+    at: 05:00:00
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.getup_today
+  mode: single
+- id: '1705446144156'
+  alias: 'Cafetière : Éteindre automatiquement'
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.coffeemaker
+  mode: single
+- id: '1705446374757'
+  alias: 'Réveil : Allumer automatiquement'
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition:
+  - condition: state
+    state: 'on'
+    entity_id: binary_sensor.alarm_day
+  action:
+  - service: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.alarm_clock
+  mode: single
+- id: '1705503211146'
+  alias: 'Debout : Allumer si mouvement détecté'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.activity_in_corridor
+    to: 'on'
+  condition:
+  - condition: time
+    after: 06:00:00
+    before: '19:00:00'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.getup_today
+    state: 'off'
+  action:
+  - service: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.getup_today
+  mode: single
+- id: '1705504657705'
+  alias: 'Réveil : Redémarrer si pas debout'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - media_player.chambre
+    from: playing
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  - platform: state
+    entity_id:
+    - media_player.chambre
+    from: playing
+    to: paused
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: input_boolean.getup_today
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  action:
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - service: script.allumer_reveil
+    metadata: {}
+    data: {}
+  mode: single

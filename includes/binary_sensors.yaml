@@ -1,0 +1,80 @@
+#-
+#  _     _
+# | |__ (_)_ __   __ _ _ __ _   _     ___  ___ _ __  ___  ___  _ __ ___
+# | '_ \| | '_ \ / _` | '__| | | |   / __|/ _ \ '_ \/ __|/ _ \| '__/ __|
+# | |_) | | | | | (_| | |  | |_| |   \__ \  __/ | | \__ \ (_) | |  \__ \
+# |_.__/|_|_| |_|\__,_|_|   \__, |___|___/\___|_| |_|___/\___/|_|  |___/
+#                           |___/_____|
+#
+
+- platform: template
+  sensors:
+    motion_detected:
+      friendly_name: Any motion detected
+      value_template: >
+        {{ is_state("binary_sensor.activity_in_bathroom", "on")
+            or is_state("binary_sensor.activity_in_corridor", "on")
+            or is_state("binary_sensor.activity_in_living_room", "on") 
+            or is_state("binary_sensor.activity_in_bedroom", "on") }}
+
+    motion_detected_in_last_hour:
+      friendly_name: Any motion detected in last hour
+      value_template: >
+        {{ is_state("binary_sensor.motion_detected", "on") }}
+      delay_off: "01:00:00"
+
+    someone_in_the_house_in_last_hour:
+      friendly_name: Someone in the house in the last hour
+      value_template: >
+        {{ is_state("binary_sensor.motion_detected_in_last_hour", "on")
+            or is_state("person.galedrim", "home") }}
+
+    activity_in_corridor:
+      friendly_name: Activity in the corridor
+      value_template: >
+        {{ is_state("binary_sensor.contact_sensor_b103", "on")
+            and is_state("binary_sensor.motion_sensor_9821", "on") }}
+      delay_off: "00:01:00"
+
+    activity_in_bedroom:
+      friendly_name: Activity in the bedroom
+      value_template: >
+        {{ is_state("binary_sensor.withings_in_bed", "on") }}
+      delay_off: "00:01:00"
+
+    activity_in_living_room:
+      friendly_name: Activity in the living room
+      value_template: >
+        {{ is_state("media_player.salon_2", "on")
+            or is_state("switch.pc", "on") }}
+      delay_off: "00:30:00"
+
+    any_light_on:
+      friendly_name: Any light is on
+      value_template: >
+        {% set bedroom_lights_on = is_state("light.chambre_a_coucher", "on") %}
+        {% set living_room_lights_on = is_state("light.salon", "on") %}
+        {{ living_room_lights_on or bedroom_lights_on }}
+
+    anything_on:
+      friendly_name: Anything is on
+      value_template: >
+        {% set light_on = is_state("binary_sensor.any_light_on", "on") %}
+        {% set tv_on = is_state("media_player.salon_2", "on") %}
+        {% set pc_on = is_state("switch.pc", "on") %}
+        {{ light_on or tv_on or pc_on }}
+
+    vacuum_day:
+      friendly_name: Vacuum day today
+      value_template: >
+        {{ as_timestamp(now()) | timestamp_custom("%a") in ("Mon", "Wed", "Sat") }}
+
+    alarm_day:
+      friendly_name: Alarm day today
+      value_template: >
+        {{ as_timestamp(now()) | timestamp_custom("%a") in ("Mon","Tue", "Wed","Thu", "Fry") }}
+
+    no_one_home:
+      friendly_name: No one is home
+      value_template: >
+        {{ not is_state("person.galedrim", "home") }}

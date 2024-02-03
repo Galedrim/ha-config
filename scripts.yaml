@@ -1,0 +1,299 @@
+eteindre_reveil:
+  alias: Éteindre Réveil
+  sequence:
+  - service: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0
+    target:
+      entity_id: media_player.chambre
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - service: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.chambre
+  mode: single
+test:
+  alias: Démarrer Aspirateur Zones
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Tout
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Tout
+        target:
+          entity_id: vacuum.rockrobo
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Chambre
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Chambre
+        target:
+          entity_id: vacuum.rockrobo
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Couloir
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Couloir
+        target:
+          entity_id: vacuum.rockrobo
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Cuisine
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Cuisine
+        target:
+          entity_id: vacuum.rockrobo
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Salle de bain
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Salle de bain
+        target:
+          entity_id: vacuum.rockrobo
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Salon
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Salon
+        target:
+          entity_id: vacuum.rockrobo
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Toilettes
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Toilette
+        target:
+          entity_id: vacuum.rockrobo
+  icon: mdi:robot-vacuum
+  mode: single
+demarrer_chaines_tv:
+  alias: Démarrer TV Chaines
+  sequence:
+  - service: script.allumer_tv
+    metadata: {}
+    data: {}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.tv_app
+        state: Plex
+      sequence:
+      - service: media_player.play_media
+        metadata: {}
+        data:
+          media_content_id: plex://
+          media_content_type: url
+        target:
+          entity_id: media_player.salon_2
+    - conditions:
+      - condition: state
+        entity_id: input_select.tv_app
+        state: Twitch
+      sequence:
+      - service: media_player.play_media
+        metadata: {}
+        data:
+          media_content_id: twitch://channel/
+          media_content_type: url
+        target:
+          entity_id: media_player.salon_2
+    - conditions:
+      - condition: state
+        entity_id: input_select.tv_app
+        state: Youtube
+      sequence:
+      - service: media_player.play_media
+        metadata: {}
+        data:
+          media_content_id: https://www.youtube.com/feed/subscriptions
+          media_content_type: url
+        target:
+          entity_id: media_player.salon_2
+  mode: single
+  icon: mdi:remote-tv
+'1705435245310':
+  alias: Démarrer Lumières Scènes
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.living_room_color
+        state: Atténué
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.salon_attenue
+    - conditions:
+      - condition: state
+        entity_id: input_select.living_room_color
+        state: Détente
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.salon_detente
+    - conditions:
+      - condition: state
+        entity_id: input_select.living_room_color
+        state: Lumineux
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.salon_lumineux
+    - conditions:
+      - condition: state
+        entity_id: input_select.living_room_color
+        state: Palm Beach
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.salon_palm_beach
+    - conditions:
+      - condition: state
+        entity_id: input_select.living_room_color
+        state: Planète Bleue
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.salon_planete_bleue
+    - conditions:
+      - condition: state
+        entity_id: input_select.living_room_color
+        state: Tokyo
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.salon_tokyo
+  mode: single
+  icon: mdi:lightbulb-on
+demarrer_lovelace_to_yaml:
+  alias: Convertir Lovelace to YAML
+  sequence:
+  - service: shell_command.convert_lovelace
+    data: {}
+  mode: single
+'1705442251155':
+  alias: Démarrer Aspirateur
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.vacuum_zone
+        state: Tout
+      sequence:
+      - service: vacuum.send_command
+        data:
+          command: zoned_cleanup
+          params:
+            zone_ids:
+            - Tout
+        target:
+          entity_id: vacuum.rockrobo
+'1705443151631':
+  alias: Eteindre Tout
+  sequence:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.chambre_a_coucher
+      - light.lampe_chambre
+  - service: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - media_player.salon_2
+  mode: single
+allumer_reveil:
+  alias: Allumer Réveil
+  sequence:
+  - service: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.chambre
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.chambre
+    data:
+      volume_level: 0.6
+  - service: media_player.shuffle_set
+    metadata: {}
+    data:
+      shuffle: true
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - service: media_player.play_media
+    metadata:
+      title: LOFI
+      thumbnail:
+      media_class: playlist
+      children_media_class: track
+      navigateIds:
+      - {}
+      - media_content_type: library_playlists
+        media_content_id: ''
+      - media_content_type: playlist
+        media_content_id: PLiY7Mp-N2vYvnVVBUsekUyn5s_GHgiCA6
+    data:
+      media_content_id: PLiY7Mp-N2vYvnVVBUsekUyn5s_GHgiCA6
+      media_content_type: playlist
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  mode: single

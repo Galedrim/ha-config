@@ -1,0 +1,36 @@
+#-
+#  _                   _                _           _
+# (_)_ __  _ __  _   _| |_     ___  ___| | ___  ___| |_ ___
+# | | '_ \| '_ \| | | | __|   / __|/ _ \ |/ _ \/ __| __/ __|
+# | | | | | |_) | |_| | |_    \__ \  __/ |  __/ (__| |_\__ \
+# |_|_| |_| .__/ \__,_|\__|___|___/\___|_|\___|\___|\__|___/
+#         |_|            |_____|
+#
+
+living_room_color:
+  options:
+    - Atténué
+    - Détente
+    - Lumineux
+    - Palm Beach
+    - Planète Bleue
+    - Tokyo
+  icon: mdi:lightbulb-on
+
+vacuum_zone:
+  options:
+    - Tout
+    - Chambre
+    - Couloir
+    - Cuisine
+    - Salle de bain
+    - Salon
+    - Toilettes
+  icon: mdi:robot-vacuum
+
+tv_app:
+  options:
+    - Plex
+    - Twitch
+    - Youtube
+  icon: mdi:remote-tv

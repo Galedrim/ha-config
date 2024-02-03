@@ -1,0 +1,212 @@
+---
+views:
+- cards:
+  - cards:
+    - title: Modes
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: person.galedrim
+        layout: vertical
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.guest_mode
+        layout: vertical
+        name: Invité
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.vacation_mode
+        layout: vertical
+        name: Vacance
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Salon
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.salon
+        name: Lumières
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: input_select.living_room_color
+        icon_color: accent
+        name: Scènes
+        secondary_info: none
+        tap_action:
+          action: call-service
+          service: script.1705435245310
+          target: {}
+        type: custom:mushroom-select-card
+      type: horizontal-stack
+    - cards:
+      - entity: media_player.salon_2
+        fill_container: false
+        media_controls:
+        - on_off
+        name: TV
+        type: custom:mushroom-media-player-card
+        volume_controls:
+        - volume_mute
+      - entity: input_select.tv_app
+        icon_color: deep-purple
+        name: Chaînes
+        secondary_info: none
+        tap_action:
+          action: call-service
+          service: script.demarrer_chaines_tv
+          target: {}
+        type: custom:mushroom-select-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Réveil
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: input_boolean.alarm_clock
+        name: Alarme
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_datetime.alarm_clock
+        icon_color: deep-purple
+        name: Heure
+        primary_info: state
+        secondary_info: name
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    - cards:
+      - entity: media_player.chambre
+        media_controls:
+        - on_off
+        type: custom:mushroom-media-player-card
+        volume_controls:
+        - volume_mute
+      - collapsible_controls: false
+        entity: light.chambre_a_coucher
+        fill_container: false
+        name: Lumières
+        show_brightness_control: true
+        show_color_control: false
+        show_color_temp_control: false
+        type: custom:mushroom-light-card
+        use_light_color: false
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Matin
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: switch.bot_3481
+        name: Bot
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.coffeemaker
+        name: Cafetière
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    - cards:
+      - entity: input_boolean.getup_today
+        name: Debout
+        type: custom:mushroom-entity-card
+      - double_tap_action:
+          action: none
+        entity: switch.pc
+        hold_action:
+          action: none
+        tap_action:
+          action: call-service
+          service: switch.turn_on
+          target:
+            entity_id: switch.pc
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Température
+      type: custom:mushroom-title-card
+    - animated_icon: true
+      date_pattern: cccc, d.MM.yy
+      entity: weather.forecast_maison
+      hide_forecast_section: true
+      hide_today_section: false
+      locale: fr-FR
+      sun_entity: sun.sun
+      time_format: 24
+      time_pattern: HH:mm
+      type: custom:clock-weather-card
+      weather_icon_type: line
+    - cards:
+      - color_thresholds:
+        - color: '#f39c12'
+          value: 18
+        - color: '#d35400'
+          value: 19
+        - color: '#c0392b'
+          value: 20
+        entities:
+        - sensor.meter_plus_857f
+        name: Temp. Chambre
+        show:
+          icon: false
+        type: custom:mini-graph-card
+      - color_thresholds:
+        - color: '#f39c12'
+          value: 40
+        - color: '#d35400'
+          value: 50
+        - color: '#c0392b'
+          value: 60
+        entities:
+        - sensor.meter_plus_857f_humidite
+        name: Hum. Chambre
+        show:
+          icon: false
+        type: custom:mini-graph-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Aspirateur
+      type: custom:mushroom-title-card
+    - cards:
+      - commands:
+        - start_pause
+        - return_home
+        entity: vacuum.rockrobo
+        name: Robot
+        type: custom:mushroom-vacuum-card
+      - entity: input_select.vacuum_zone
+        icon: mdi:vacuum
+        icon_color: deep-purple
+        name: Zone
+        secondary_info: none
+        tap_action:
+          action: call-service
+          service: script.test
+          target: {}
+        type: custom:mushroom-select-card
+      type: horizontal-stack
+    - cards:
+      - entity: input_boolean.cleaned_today
+        name: Nettoyé
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_datetime.vacuum_off
+        icon: mdi:clock
+        icon_color: ''
+        primary: '{{ ((as_timestamp(now()) - as_timestamp(states("input_datetime.vacuum_off")))
+          / 86400) | int }} jours
+
+          '
+        secondary: '{{ ((states("sensor.robot_vacuum_last_clean_duration") | float)
+          / 60) | round(0, ''ceil'') }} min
+
+          '
+        type: custom:mushroom-template-card
+      type: horizontal-stack
+    type: vertical-stack
+  title: Home
