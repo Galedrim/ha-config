@@ -247,7 +247,7 @@
     data: {}
   mode: single
 - id: '1705443451025'
-  alias: 'Réveil : Démarrer avec Lumières'
+  alias: 'Réveil : Démarrer avec Nest Mini et Lumières'
   description: ''
   trigger:
   - platform: template
@@ -260,26 +260,24 @@
   - condition: state
     entity_id: input_boolean.getup_today
     state: 'off'
+  - condition: state
+    entity_id: input_boolean.wakeup_today
+    state: 'off'
   action:
-  - service: input_boolean.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: input_boolean.alarm_clock
   - service: light.turn_on
     metadata: {}
     data:
-      transition: 300
       brightness: 255
+      transition: 300
     target:
       entity_id: light.lampe_chambre
-  - delay:
-      hours: 0
-      minutes: 5
-      seconds: 0
-      milliseconds: 0
   - service: script.allumer_reveil
     metadata: {}
+    data: {}
+  - service: input_boolean.turn_on
+    target:
+      entity_id:
+      - input_boolean.wakeup_today
     data: {}
   mode: single
 - id: '1705444083342'
@@ -292,16 +290,19 @@
     to: 'on'
   condition: []
   action:
-  - service: media_player.media_stop
-    target:
-      entity_id:
-      - media_player.chambre
-    data: {}
   - service: light.turn_off
     metadata: {}
     data: {}
     target:
       entity_id: light.chambre_a_coucher
+  - service: script.eteindre_reveil
+    metadata: {}
+    data: {}
+  - service: script.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: script.allumer_nest_mini_graduellement
   mode: single
 - id: '1705444466577'
   alias: 'Sortie : Allumer lumière si mouvement détecté'
@@ -372,6 +373,11 @@
     data: {}
     target:
       entity_id: input_boolean.getup_today
+  - service: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.wakeup_today
   mode: single
 - id: '1705446144156'
   alias: 'Cafetière : Éteindre automatiquement'
@@ -386,23 +392,6 @@
     data: {}
     target:
       entity_id: input_boolean.coffeemaker
-  mode: single
-- id: '1705446374757'
-  alias: 'Réveil : Allumer automatiquement'
-  description: ''
-  trigger:
-  - platform: time
-    at: 00:00:00
-  condition:
-  - condition: state
-    state: 'on'
-    entity_id: binary_sensor.alarm_day
-  action:
-  - service: input_boolean.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: input_boolean.alarm_clock
   mode: single
 - id: '1705503211146'
   alias: 'Debout : Allumer si mouvement détecté'
@@ -436,24 +425,9 @@
   alias: 'Réveil : Redémarrer si pas debout'
   description: ''
   trigger:
-  - platform: state
-    entity_id:
-    - media_player.chambre
-    from: playing
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-  - platform: state
-    entity_id:
-    - media_player.chambre
-    from: playing
-    to: paused
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
+  - platform: template
+    value_template: '{{ states("sensor.time")[0:5] == states("input_datetime.alarm_clock")
+      }}'
   condition:
   - condition: state
     entity_id: input_boolean.getup_today
@@ -465,12 +439,6 @@
     entity_id: input_boolean.vacation_mode
     state: 'off'
   action:
-  - delay:
-      hours: 0
-      minutes: 5
-      seconds: 0
-      milliseconds: 0
-  - service: script.allumer_reveil
-    metadata: {}
+  - service: script.allumer_nest_mini_instantanement
     data: {}
   mode: single

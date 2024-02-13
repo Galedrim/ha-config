@@ -12,10 +12,9 @@
     motion_detected:
       friendly_name: Any motion detected
       value_template: >
-        {{ is_state("binary_sensor.activity_in_bathroom", "on")
+        {{ is_state("binary_sensor.activity_in_bedroom", "on")
             or is_state("binary_sensor.activity_in_corridor", "on")
-            or is_state("binary_sensor.activity_in_living_room", "on") 
-            or is_state("binary_sensor.activity_in_bedroom", "on") }}
+            or is_state("binary_sensor.activity_in_living_room", "on") }}
 
     motion_detected_in_last_hour:
       friendly_name: Any motion detected in last hour
@@ -67,12 +66,26 @@
     vacuum_day:
       friendly_name: Vacuum day today
       value_template: >
-        {{ as_timestamp(now()) | timestamp_custom("%a") in ("Mon", "Wed", "Sat") }}
+        {{ as_timestamp(now()) | timestamp_custom("%a") in ("Mon", "Wed", "Fri") }}
 
     alarm_day:
-      friendly_name: Alarm day today
+      friendly_name: "Alarm day today"
       value_template: >
-        {{ as_timestamp(now()) | timestamp_custom("%a") in ("Mon","Tue", "Wed","Thu", "Fry") }}
+        {% set day = as_timestamp(now()) | timestamp_custom("%a") %}
+        {% set days = {
+            'Mon': 'alarm_monday',
+            'Tue': 'alarm_tuesday',
+            'Wed': 'alarm_wednesday',
+            'Thu': 'alarm_thursday',
+            'Fri': 'alarm_friday',
+            'Sat': 'alarm_saturday',
+            'Sun': 'alarm_sunday'
+        } %}
+        {% if states('input_boolean.' ~ days[day]) == 'on' %}
+          true
+        {% else %}
+          false
+        {% endif %}
 
     no_one_home:
       friendly_name: No one is home

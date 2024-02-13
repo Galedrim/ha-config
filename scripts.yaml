@@ -1,5 +1,5 @@
 eteindre_reveil:
-  alias: Éteindre Réveil
+  alias: Éteindre Nest Mini
   sequence:
   - service: media_player.volume_set
     metadata: {}
@@ -118,8 +118,9 @@ test:
 demarrer_chaines_tv:
   alias: Démarrer TV Chaines
   sequence:
-  - service: script.allumer_tv
-    metadata: {}
+  - service: media_player.turn_on
+    target:
+      entity_id: media_player.salon_2
     data: {}
   - choose:
     - conditions:
@@ -227,22 +228,18 @@ demarrer_lovelace_to_yaml:
     data: {}
   mode: single
 '1705442251155':
-  alias: Démarrer Aspirateur
+  alias: Démarrer Aspirateur Tout
   sequence:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_select.vacuum_zone
-        state: Tout
-      sequence:
-      - service: vacuum.send_command
-        data:
-          command: zoned_cleanup
-          params:
-            zone_ids:
-            - Tout
-        target:
-          entity_id: vacuum.rockrobo
+  - service: vacuum.send_command
+    metadata: {}
+    data:
+      command: zoned_cleanup
+      params:
+        zone_ids:
+        - Tout
+    target:
+      entity_id: vacuum.rockrobo
+  mode: single
 '1705443151631':
   alias: Eteindre Tout
   sequence:
@@ -261,18 +258,13 @@ demarrer_lovelace_to_yaml:
       - media_player.salon_2
   mode: single
 allumer_reveil:
-  alias: Allumer Réveil
+  alias: Allumer Nest Mini Graduellement
   sequence:
   - service: media_player.turn_on
     metadata: {}
     data: {}
     target:
       entity_id: media_player.chambre
-  - service: media_player.volume_set
-    target:
-      entity_id: media_player.chambre
-    data:
-      volume_level: 0.6
   - service: media_player.shuffle_set
     metadata: {}
     data:
@@ -294,6 +286,147 @@ allumer_reveil:
     data:
       media_content_id: PLiY7Mp-N2vYvnVVBUsekUyn5s_GHgiCA6
       media_content_type: playlist
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - service: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.2
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.3
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.4
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.5
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.6
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  mode: single
+demarrer_plex_sur_tv:
+  alias: Démarrer TV Plex
+  sequence:
+  - service: media_player.turn_on
+    target:
+      entity_id: media_player.salon_2
+    data: {}
+  - service: media_player.play_media
+    metadata: {}
+    data:
+      media_content_id: plex://
+      media_content_type: url
+    target:
+      entity_id: media_player.salon_2
+  mode: single
+  icon: mdi:remote-tv
+demarrer_tv_twitch:
+  alias: Démarrer TV Twitch
+  sequence:
+  - service: media_player.turn_on
+    target:
+      entity_id: media_player.salon_2
+    data: {}
+  - service: media_player.play_media
+    metadata: {}
+    data:
+      media_content_id: twitch://channel/
+      media_content_type: url
+    target:
+      entity_id: media_player.salon_2
+  mode: single
+  icon: mdi:remote-tv
+demarrer_tv_youtube:
+  alias: Démarrer TV Youtube
+  sequence:
+  - service: media_player.turn_on
+    target:
+      entity_id: media_player.salon_2
+    data: {}
+  - service: media_player.play_media
+    metadata: {}
+    data:
+      media_content_id: https://www.youtube.com/feed/subscriptions
+      media_content_type: url
+    target:
+      entity_id: media_player.salon_2
+  mode: single
+  icon: mdi:remote-tv
+allumer_nest_mini_instantanement:
+  alias: Allumer Nest Mini Instantanément
+  sequence:
+  - service: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.chambre
+  - service: media_player.shuffle_set
+    metadata: {}
+    data:
+      shuffle: true
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - service: media_player.play_media
+    metadata:
+      title: LOFI
+      thumbnail:
+      media_class: playlist
+      children_media_class: track
+      navigateIds:
+      - {}
+      - media_content_type: library_playlists
+        media_content_id: ''
+      - media_content_type: playlist
+        media_content_id: PLiY7Mp-N2vYvnVVBUsekUyn5s_GHgiCA6
+    data:
+      media_content_id: PLiY7Mp-N2vYvnVVBUsekUyn5s_GHgiCA6
+      media_content_type: playlist
+    target:
+      entity_id: media_player.ytube_music_nest_mini
+  - service: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.8
     target:
       entity_id: media_player.ytube_music_nest_mini
   mode: single

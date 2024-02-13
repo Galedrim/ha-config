@@ -15,6 +15,10 @@ getup_today:
   name: Get up today
   icon: mdi:bed-king
 
+wakeup_today:
+  name: Wake up today
+  icon: mdi:bed
+
 vacation_mode:
   name: On Vacation
   icon: mdi:airplane
@@ -30,3 +34,32 @@ alarm_clock:
 coffeemaker:
   name: Coffeemaker is on
   icon: mdi:coffee-maker
+
+# Alarm Days
+alarm_monday:
+  name: Alarm on monday
+  icon: mdi:circle-outline
+
+alarm_tuesday:
+  name: Alarm on tuesday
+  icon: mdi:circle-outline
+
+alarm_wednesday:
+  name: Alarm on wednesday
+  icon: mdi:circle-outline
+
+alarm_thursday:
+  name: Alarm on thursday
+  icon: mdi:circle-outline
+
+alarm_friday:
+  name: Alarm on friday
+  icon: mdi:circle-outline
+
+alarm_saturday:
+  name: Alarm on saturday
+  icon: mdi:circle-outline
+
+alarm_sunday:
+  name: Alarm on sunday
+  icon: mdi:circle-outline
