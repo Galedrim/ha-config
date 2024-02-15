@@ -14,4 +14,3 @@ logs:
   # custom_components.hacs: debug
   # aiogithubapi: debug
   homeassistant.components.shell_command: debug
-  

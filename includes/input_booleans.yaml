@@ -64,4 +64,3 @@ alarm_saturday:
 alarm_sunday:
   name: Alarm on sunday
   icon: mdi:circle-outline
-  

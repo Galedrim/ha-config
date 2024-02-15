@@ -42,4 +42,3 @@ tv_off:
   name: TV last done
   has_date: true
   has_time: true
-  
