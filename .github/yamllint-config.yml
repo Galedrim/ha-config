@@ -14,8 +14,10 @@ rules:
   comments-indentation: disable
 
 ignore: |
-  lovelace-ui.yaml
+  .github/workflows/
   utils/
   .git
-  .github/workflows/
+  automations.yaml
+  lovelace-ui.yaml
   scenes.yaml
+  scripts.yaml
