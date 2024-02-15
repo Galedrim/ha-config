@@ -1,3 +1,4 @@
+---
 #-
 #  _     _
 # | |__ (_)_ __   __ _ _ __ _   _     ___  ___ _ __  ___  ___  _ __ ___
@@ -91,3 +92,4 @@
       friendly_name: No one is home
       value_template: >
         {{ not is_state("person.galedrim", "home") }}
+        

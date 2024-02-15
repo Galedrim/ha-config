@@ -1,3 +1,4 @@
+---
 #  _     _   _         
 # | |   | | | |        
 # | |__ | |_| |_ _ __  
@@ -10,5 +11,5 @@
 use_x_forwarded_for: true
 trusted_proxies:
   - 172.30.33.0/24
-ip_ban_enabled: true 	        # use this to enable auto IP ban
-login_attempts_threshold: 3 	# set the number of allowed login attempts
+ip_ban_enabled: true
+login_attempts_threshold: 3
