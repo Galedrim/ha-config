@@ -258,10 +258,13 @@
     entity_id: input_boolean.alarm_clock
     state: 'on'
   - condition: state
-    entity_id: input_boolean.getup_today
+    entity_id: input_boolean.wakeup_today
     state: 'off'
   - condition: state
-    entity_id: input_boolean.wakeup_today
+    entity_id: binary_sensor.alarm_day
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.getup_today
     state: 'off'
   action:
   - service: input_boolean.turn_on
@@ -413,9 +416,6 @@
     state: 'off'
   - condition: state
     entity_id: input_boolean.getup_today
-    state: 'off'
-  - condition: state
-    entity_id: binary_sensor.activity_in_bedroom
     state: 'off'
   action:
   - service: input_boolean.turn_on
