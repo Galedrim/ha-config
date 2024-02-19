@@ -1,48 +1,46 @@
 
 # Galedrim's Home Assistant config files
-Using Mushroom Cards/Themes on a vertical android tablet.
+Using [HASS-Agent](https://github.com/LAB02-Research/HASS.Agent) on Windows PC and HomeAssistant App on Amazon Fire Tablet.
 
-![2024-02-03_03-39](https://github.com/Galedrim/ha-config/assets/84284891/31e9711d-0a21-49c2-8053-0ee9412e9e51)
-
-## Table of content
-* [My devices](https://github.com/Galedrim/ha-config#my-devices)
-* [Supervisor Add-on](https://github.com/Galedrim/ha-config#supervisor-add-ons)
-* [Automations](https://github.com/Galedrim/ha-config#automations)
+![image](https://github.com/Galedrim/ha-config/assets/84284891/23351114-75ce-4559-b6c9-24588a3fe78b)
 
 ## Best Features
 * Xiaomi Roborock Vacuum use a [custom firmware image Valetudo](https://valetudo.cloud/pages/installation/roborock.html)
-and [communicate via MQTT Protocol](https://domopi.eu/faire-communiquer-votre-aspirateur-robot-xiaomi-roborock-en-mqtt)
+and [communicate via MQTT Protocol](https://domopi.eu/faire-communiquer-votre-aspirateur-robot-xiaomi-roborock-en-mqtt) with HomeAssistant
+* Google Mini and [Youtube Music Player integration](https://github.com/KoljaWindeler/ytube_music_player) used as Alarm Clock
+* Withings sleep analyzer and MotionSensors used to start Morning Routine
 * Home Assistant use [lovelace.json to lovelace-ui.yaml converter](https://github.com/basnijholt/home-assistant-config?tab=readme-ov-file#lovelace-) for version control
-* Alarm Clock use Google Mini and [Youtube Music Player integration](https://github.com/KoljaWindeler/ytube_music_player)
-* Coffeemaker use [switchbot bot](https://www.amazon.fr/SwitchBot-m%C3%A9caniquement-interrupteur-programmable-lapplication/dp/B07B7NXV4R) to start automatically 
-* Automations when waking up use [withings sleep analyzer](https://www.withings.com/fr/fr/sleep-analyzer) and [motion sensors](https://www.switch-bot.com/products/motion-sensor) to detect presence
 
 ## My devices
-|  Devices  |  Units  | 
+|   Switches 🔌  |  Units  | 
 | --- | --- |
-|   Switches 🔌  |    |  
 |   TP-Link HS110  |  1  | 
 |   Switchbot Bot  |  1  |
+
+|  Sensors 🌡  |  Units  | 
 | --- | --- |
-|   Sensors 🌡 |    | 
 |   Xiaomi Mi Flora  |  1  | 
 |   Switchbot Meter Plus  |  1  |
 |   Switchbot Motion Sensor  |  1  | 
 |   Switchbot Contact Sensor  |  1  | 
+
+|  Lights 💡  |  Units  | 
 | --- | --- |
-|   Lights 💡 |     | 
 |   Philips Hue E27 White and Color  |  2  |
 |   Philips Hue LED strip 2m  |  1  |
 |   Philips Hue E14 White Ambiance  |  1  |
+
+|   Hubs 🌍  |  Units  | 
 | --- | --- |
-|   Hubs 🌍 |     | 
 |   Switchbot Hub Mini  |  1  |
 |   Phillips Hub Bridge  |  1  |
+
+|   Broom 🧹 |  Units  | 
 | --- | --- |
-|   Broom 🧹 |     |  
 |   Xiaomi Mi Roborock V1  |  1  |
+
+|   Equipements 🖥  |  Units  | 
 | --- | --- |
-|   Equipements 🖥 |     | 
 |   Iphone 13 |  1  | 
 |   Withing Sleep Analyser |  1  | 
 |   Google Mini  |  1  |
@@ -61,6 +59,3 @@ and [communicate via MQTT Protocol](https://domopi.eu/faire-communiquer-votre-as
 * [Mini-graph-card](https://github.com/kalkih/mini-graph-card)
 * [Mushroom](https://github.com/piitaya/lovelace-mushroom)
 * [ytube_music_player](https://github.com/KoljaWindeler/ytube_music_player)
-
-## Automations
-* TODO
