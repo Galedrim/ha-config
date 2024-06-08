@@ -6,16 +6,22 @@ views:
       type: custom:mushroom-title-card
     - cards:
       - entity: person.galedrim
-        layout: vertical
+        layout: horizontal
         type: custom:mushroom-entity-card
+      - entity: input_boolean.sleep_mode
+        layout: horizontal
+        name: Nuit
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    - cards:
       - entity: input_boolean.guest_mode
-        layout: vertical
         name: Invité
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
       - entity: input_boolean.vacation_mode
-        layout: vertical
         name: Vacance
         tap_action:
           action: toggle
@@ -62,8 +68,25 @@ views:
       type: horizontal-stack
     type: vertical-stack
   - cards:
-    - title: Réveil
+    - title: Chambre
       type: custom:mushroom-title-card
+    - cards:
+      - entity: media_player.chambre
+        media_controls: []
+        tap_action:
+          action: toggle
+        type: custom:mushroom-media-player-card
+        volume_controls: []
+      - collapsible_controls: false
+        entity: light.chambre_a_coucher
+        fill_container: false
+        name: Lumières
+        show_brightness_control: false
+        show_color_control: false
+        show_color_temp_control: false
+        type: custom:mushroom-light-card
+        use_light_color: false
+      type: horizontal-stack
     - cards:
       - entity: input_boolean.alarm_clock
         name: Alarme
@@ -78,40 +101,91 @@ views:
         type: custom:mushroom-entity-card
       type: horizontal-stack
     - cards:
-      - entity: media_player.chambre
-        media_controls:
-        - on_off
-        type: custom:mushroom-media-player-card
-        volume_controls:
-        - volume_mute
-      - collapsible_controls: false
-        entity: light.chambre_a_coucher
+      - entity: input_boolean.alarm_monday
         fill_container: false
-        name: Lumières
-        show_brightness_control: true
-        show_color_control: false
-        show_color_temp_control: false
-        type: custom:mushroom-light-card
-        use_light_color: false
-      type: horizontal-stack
-    type: vertical-stack
-  - cards:
-    - title: Matin
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: switch.bot_3481
-        name: Bot
+        icon_type: icon
+        layout: vertical
+        name: L
+        primary_info: none
+        secondary_info: name
         tap_action:
           action: toggle
         type: custom:mushroom-entity-card
-      - entity: input_boolean.coffeemaker
-        name: Cafetière
+      - entity: input_boolean.alarm_tuesday
+        icon_type: icon
+        layout: vertical
+        name: M
+        primary_info: none
+        secondary_info: name
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.alarm_wednesday
+        icon_type: icon
+        layout: vertical
+        name: M
+        primary_info: none
+        secondary_info: name
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.alarm_thursday
+        icon_type: icon
+        layout: vertical
+        name: J
+        primary_info: none
+        secondary_info: name
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.alarm_friday
+        icon_type: icon
+        layout: vertical
+        name: V
+        primary_info: none
+        secondary_info: name
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.alarm_saturday
+        icon_type: icon
+        layout: vertical
+        name: S
+        primary_info: none
+        secondary_info: name
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.alarm_sunday
+        icon_type: icon
+        layout: vertical
+        name: D
+        primary_info: none
+        secondary_info: name
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Equipements
+      type: custom:mushroom-title-card
+    - cards:
+      - icon: mdi:coffee-maker
+        primary: Cafetière
+        secondary: '{{ states("input_datetime.coffeemaker_on")[0:5]  }}
+
+          '
+        tap_action:
+          action: call-service
+          service: script.allumer_cafetiere
+          target: {}
+        type: custom:mushroom-template-card
+      - entity: sensor.marin_echo_next_timer
+        name: Echo
         type: custom:mushroom-entity-card
       type: horizontal-stack
     - cards:
-      - entity: input_boolean.getup_today
-        name: Debout
-        type: custom:mushroom-entity-card
       - double_tap_action:
           action: none
         entity: switch.pc
@@ -123,12 +197,15 @@ views:
           target:
             entity_id: switch.pc
         type: custom:mushroom-entity-card
+      - entity: binary_sensor.rpi_power_status
+        name: Serveur
+        type: custom:mushroom-entity-card
       type: horizontal-stack
     type: vertical-stack
   - cards:
     - title: Température
       type: custom:mushroom-title-card
-    - animated_icon: true
+    - animated_icon: false
       date_pattern: cccc, d.MM.yy
       entity: weather.forecast_maison
       hide_forecast_section: true
@@ -138,7 +215,7 @@ views:
       time_format: 24
       time_pattern: HH:mm
       type: custom:clock-weather-card
-      weather_icon_type: line
+      weather_icon_type: fill
     - cards:
       - color_thresholds:
         - color: '#f39c12'
@@ -177,6 +254,8 @@ views:
         - return_home
         entity: vacuum.rockrobo
         name: Robot
+        primary_info: state
+        secondary_info: none
         type: custom:mushroom-vacuum-card
       - entity: input_select.vacuum_zone
         icon: mdi:vacuum
@@ -190,22 +269,21 @@ views:
         type: custom:mushroom-select-card
       type: horizontal-stack
     - cards:
-      - entity: input_boolean.cleaned_today
-        name: Nettoyé
-        tap_action:
-          action: toggle
+      - entity: binary_sensor.vacuum_day
+        name: Nettoyage
         type: custom:mushroom-entity-card
-      - entity: input_datetime.vacuum_off
+      - double_tap_action:
+          action: none
+        entity: input_datetime.vacuum_off
+        hold_action:
+          action: none
         icon: mdi:clock
         icon_color: ''
-        primary: '{{ ((as_timestamp(now()) - as_timestamp(states("input_datetime.vacuum_off")))
-          / 86400) | int }} jours
-
-          '
-        secondary: '{{ ((states("sensor.robot_vacuum_last_clean_duration") | float)
-          / 60) | round(0, ''ceil'') }} min
-
-          '
+        primary: Historique
+        secondary: '{{ ((as_timestamp(now()) - as_timestamp(states("input_datetime.vacuum_off",
+          1))) / 86400) | int(0) }} jours'
+        tap_action:
+          action: none
         type: custom:mushroom-template-card
       type: horizontal-stack
     type: vertical-stack
