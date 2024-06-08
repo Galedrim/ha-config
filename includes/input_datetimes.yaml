@@ -13,6 +13,11 @@ alarm_clock:
   has_date: false
   has_time: true
 
+coffeemaker_on:
+  name: Coffeemaker last started
+  has_date: false
+  has_time: true
+
 vacuum_on:
   name: Vacuum last started
   has_date: true
