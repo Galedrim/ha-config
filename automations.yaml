@@ -1,5 +1,5 @@
 - id: '1705440749668'
-  alias: 'PC : Eteindre si pas de courant'
+  alias: 'PC : Eteindre si faible consommation'
   description: ''
   trigger:
   - platform: numeric_state
@@ -14,13 +14,14 @@
     data: {}
   mode: single
 - id: '1705440915802'
-  alias: 'PC : Allumer si debout'
+  alias: 'PC : Allumer au réveil'
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - input_boolean.getup_today
-    to: 'on'
+    - input_boolean.sleep_mode
+    to: 'off'
+    from: 'on'
   condition:
   - condition: state
     entity_id: input_boolean.guest_mode
@@ -39,7 +40,7 @@
       entity_id: switch.pc
   mode: single
 - id: '1705441264950'
-  alias: 'Mode Vacances : Démarrer Automatiquement'
+  alias: 'Vacation Mode : Démarrer Automatiquement'
   description: ''
   trigger:
   - platform: state
@@ -60,9 +61,14 @@
     data: {}
     target:
       entity_id: input_boolean.vacation_mode
+  - service: notify.mobile_app_iphone_de_paulj
+    metadata: {}
+    data:
+      title: Vacation Mode
+      message: Personne dans la maison depuis24h, changement en "Vacation Mode"
   mode: single
 - id: '1705441394367'
-  alias: 'Mode vacances : Eteindre automatiquement'
+  alias: 'Vacation Mode : Eteindre automatiquement'
   description: ''
   trigger:
   - platform: state
@@ -83,9 +89,14 @@
     data: {}
     target:
       entity_id: input_boolean.vacation_mode
+  - service: notify.mobile_app_iphone_de_paulj
+    metadata: {}
+    data:
+      title: Vacation Mode
+      message: Bon Retour ! Arrêt du "Vacation Mode"
   mode: single
 - id: '1705441556131'
-  alias: 'Aspirateur : Démarré'
+  alias: 'Aspirateur : Nettoyage Démarré'
   description: ''
   trigger:
   - platform: state
@@ -101,9 +112,13 @@
       datetime: '{{ now().isoformat() }}'
     target:
       entity_id: input_datetime.vacuum_on
+  - service: notify.mobile_app_iphone_de_paulj
+    data:
+      title: Robot Aspirateur
+      message: Robot Aspirateur a commencé à nettoyer
   mode: single
 - id: '1705441783755'
-  alias: 'Aspirateur : Terminé'
+  alias: 'Aspirateur : Nettoyage Terminé'
   description: ''
   trigger:
   - platform: state
@@ -124,9 +139,14 @@
       datetime: '{{ now().isoformat() }}'
     target:
       entity_id: input_datetime.vacuum_off
+  - service: notify.mobile_app_iphone_de_paulj
+    metadata: {}
+    data:
+      message: '"Nettoyage terminé"'
+      title: Robot Aspirateur
   mode: single
 - id: '1705441984424'
-  alias: 'Aspirateur : Nettoyer si absent'
+  alias: 'Aspirateur : Démarrer si absent'
   description: ''
   trigger:
   - platform: state
@@ -134,8 +154,8 @@
     - person.galedrim
     from: home
     to: not_home
-  - platform: time
-    at: '16:00:00'
+  - platform: time_pattern
+    hours: /1
   condition:
   - condition: time
     after: '16:00:00'
@@ -144,7 +164,7 @@
     entity_id: binary_sensor.vacuum_day
     state: 'on'
   - condition: state
-    entity_id: input_boolean.cleaned_today
+    entity_id: input_boolean.vacuum_cleaned_today
     state: 'off'
   - condition: state
     entity_id: input_boolean.guest_mode
@@ -153,22 +173,22 @@
     entity_id: input_boolean.vacation_mode
     state: 'off'
   - condition: state
-    entity_id: person.galedrim
-    state: not_home
+    entity_id: binary_sensor.no_one_home
+    state: 'on'
   action:
   - service: script.1705442251155
     metadata: {}
     data: {}
   mode: single
 - id: '1705442385080'
-  alias: 'Aspirateur : Eteindre automatiquement'
+  alias: 'Aspirateur : Nettoyage Reset'
   description: ''
   trigger:
   - platform: time
     at: 00:00:00
   condition:
   - condition: state
-    entity_id: input_boolean.cleaned_today
+    entity_id: input_boolean.vacuum_cleaned_today
     state: 'on'
   action:
   - service: input_boolean.turn_off
@@ -178,7 +198,7 @@
       entity_id: input_boolean.cleaned_today
   mode: single
 - id: '1705442543425'
-  alias: 'PC : Terminé'
+  alias: 'PC : Extinction Effectuée'
   description: ''
   trigger:
   - platform: state
@@ -196,7 +216,7 @@
       entity_id: input_datetime.pc_off
   mode: single
 - id: '1705442602863'
-  alias: 'PC : Démarré'
+  alias: 'PC : Démarrage Effectué'
   description: ''
   trigger:
   - platform: state
@@ -214,16 +234,16 @@
       entity_id: input_datetime.pc_on
   mode: single
 - id: '1705442996063'
-  alias: 'Sortie : Eteindre tout automatiquement'
+  alias: 'Lumières : Eteindre si absent'
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.motion_detected_in_last_hour
-    from: 'on'
-    to: 'off'
+    - person.galedrim
+    from: home
+    to: not_home
     for:
-      hours: 1
+      hours: 0
       minutes: 0
       seconds: 0
   - platform: time_pattern
@@ -233,21 +253,16 @@
     entity_id: binary_sensor.no_one_home
     state: 'on'
   - condition: state
-    entity_id: binary_sensor.anything_on
-    state: 'on'
-  - condition: state
-    entity_id: binary_sensor.someone_in_the_house_in_last_hour
-    state: 'off'
-  - condition: state
     entity_id: input_boolean.guest_mode
     state: 'off'
   action:
-  - service: script.1705443151631
-    metadata: {}
+  - service: light.turn_off
+    target:
+      entity_id: light.salon
     data: {}
   mode: single
 - id: '1705443451025'
-  alias: 'Réveil : Démarrer avec Nest Mini et Lumières'
+  alias: 'Réveil : Allumer Nest et Lumières Graduellement'
   description: ''
   trigger:
   - platform: template
@@ -258,40 +273,43 @@
     entity_id: input_boolean.alarm_clock
     state: 'on'
   - condition: state
-    entity_id: input_boolean.wakeup_today
+    entity_id: input_boolean.alarm_sounded_today
     state: 'off'
   - condition: state
     entity_id: binary_sensor.alarm_day
     state: 'on'
   - condition: state
-    entity_id: input_boolean.getup_today
-    state: 'off'
+    entity_id: input_boolean.sleep_mode
+    state: 'on'
   action:
-  - service: input_boolean.turn_on
-    target:
-      entity_id:
-      - input_boolean.wakeup_today
-    data: {}
-  - service: light.turn_on
+  - service: script.allumer_lumiere_graduellement
     metadata: {}
-    data:
-      brightness: 255
-      transition: 300
-    target:
-      entity_id: light.lampe_chambre
+    data: {}
   - service: script.allumer_reveil
     metadata: {}
     data: {}
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.alarm_sounded_today
+  - service: automation.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: automation.reveil_redemarrer_si_pas_debout
   mode: single
 - id: '1705444083342'
-  alias: 'Réveil : Eteindre si debout'
+  alias: 'Réveil : Eteindre si activité dans couloir'
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - input_boolean.getup_today
+    - binary_sensor.activity_in_corridor
     to: 'on'
-  condition: []
+  condition:
+  - condition: state
+    entity_id: light.lampe_chambre
+    state: 'on'
   action:
   - service: light.turn_off
     metadata: {}
@@ -306,22 +324,34 @@
     data: {}
     target:
       entity_id: script.allumer_nest_mini_graduellement
+  - service: automation.turn_off
+    target:
+      entity_id:
+      - automation.reveil_redemarrer_si_pas_debout
+    data:
+      stop_actions: true
   mode: single
 - id: '1705444466577'
-  alias: 'Sortie : Allumer lumière si mouvement détecté'
+  alias: 'Lumières : Allumer si porte ouverte'
   description: ''
   trigger:
-  - type: motion
+  - type: opened
     platform: device
     device_id: 94560330ef87779919f3d612f5bd0018
-    entity_id: 4753e18c2fa8e46a38afd65c07732ec7
+    entity_id: 5b81079f7f8a29b8b259add1213ed57b
     domain: binary_sensor
   condition:
   - condition: sun
     before: sunrise
     after: sunset
   - condition: state
-    entity_id: binary_sensor.motion_detected_in_last_hour
+    entity_id: binary_sensor.someone_in_the_house_in_last_hour
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
     state: 'off'
   action:
   - service: light.turn_on
@@ -331,13 +361,14 @@
       entity_id: light.salon
   mode: single
 - id: '1705445702418'
-  alias: 'Cafetière : Démarrer si debout'
+  alias: 'Cafetière : Allumer au réveil'
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - input_boolean.getup_today
-    to: 'on'
+    - input_boolean.sleep_mode
+    to: 'off'
+    from: 'on'
   condition:
   - condition: state
     entity_id: input_boolean.guest_mode
@@ -346,44 +377,43 @@
     entity_id: input_boolean.vacation_mode
     state: 'off'
   - condition: state
-    entity_id: input_boolean.coffeemaker
+    entity_id: input_boolean.coffeemaker_started_today
     state: 'off'
-  - condition: time
-    after: 06:00:00
-    before: '17:00:00'
   action:
-  - service: switch.toggle
-    target:
-      entity_id:
-      - switch.bot_3481
+  - service: script.allumer_cafetiere
     data: {}
   - service: input_boolean.turn_on
     metadata: {}
     data: {}
     target:
-      entity_id: input_boolean.coffeemaker
+      entity_id: input_boolean.coffeemaker_started_today
   mode: single
 - id: '1705445987483'
-  alias: 'Debout: Eteindre automatiquement'
+  alias: 'Sleep Mode : Démarrer automatiquement'
   description: ''
   trigger:
-  - platform: time
-    at: 05:00:00
-  condition: []
+  - platform: state
+    entity_id:
+    - binary_sensor.activity_in_bedroom
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.sleep_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: time
+    after: '21:00:00'
+    before: 07:00:00
   action:
-  - service: input_boolean.turn_off
-    metadata: {}
-    data: {}
+  - service: input_boolean.turn_on
     target:
-      entity_id: input_boolean.getup_today
-  - service: input_boolean.turn_off
-    metadata: {}
+      entity_id: input_boolean.sleep_mode
     data: {}
-    target:
-      entity_id: input_boolean.wakeup_today
   mode: single
 - id: '1705446144156'
-  alias: 'Cafetière : Éteindre automatiquement'
+  alias: 'Cafetière : Démarrage Reset'
   description: ''
   trigger:
   - platform: time
@@ -394,10 +424,10 @@
     metadata: {}
     data: {}
     target:
-      entity_id: input_boolean.coffeemaker
+      entity_id: input_boolean.coffeemaker_started_today
   mode: single
 - id: '1705503211146'
-  alias: 'Debout : Allumer si mouvement détecté'
+  alias: 'Sleep Mode : Éteindre automatiquement'
   description: ''
   trigger:
   - platform: state
@@ -405,43 +435,91 @@
     - binary_sensor.activity_in_corridor
     to: 'on'
   condition:
-  - condition: time
-    after: 06:00:00
-    before: '19:00:00'
   - condition: state
     entity_id: input_boolean.vacation_mode
     state: 'off'
   - condition: state
     entity_id: input_boolean.guest_mode
     state: 'off'
-  - condition: state
-    entity_id: input_boolean.getup_today
-    state: 'off'
+  - condition: time
+    after: 07:00:00
+    before: '21:00:00'
   action:
-  - service: input_boolean.turn_on
-    metadata: {}
-    data: {}
+  - service: input_boolean.turn_off
     target:
-      entity_id: input_boolean.getup_today
+      entity_id:
+      - input_boolean.sleep_mode
+    data: {}
   mode: single
 - id: '1705504657705'
-  alias: 'Réveil : Redémarrer si pas debout'
+  alias: 'Réveil : Redémarrer toutes les 5 minutes'
   description: ''
   trigger:
-  - platform: template
-    value_template: '{{ states("sensor.time")[0:5] == states("input_datetime.alarm_clock")
-      }}'
-  condition:
-  - condition: state
-    entity_id: input_boolean.getup_today
-    state: 'off'
-  - condition: state
-    entity_id: input_boolean.guest_mode
-    state: 'off'
-  - condition: state
-    entity_id: input_boolean.vacation_mode
-    state: 'off'
+  - platform: time_pattern
+    minutes: /5
+  condition: []
   action:
   - service: script.allumer_nest_mini_instantanement
     data: {}
+  mode: single
+- id: '1708603692401'
+  alias: 'Lumières : Eteindre si dormir'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.sleep_mode
+    to: 'on'
+    from: 'off'
+  condition:
+  - condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  action:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.salon
+  mode: single
+- id: '1717426309232'
+  alias: 'Réveil : Démarrage Reset'
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition:
+  - condition: state
+    entity_id: input_boolean.alarm_sounded_today
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.alarm_sounded_today
+  mode: single
+- id: '1717430695623'
+  alias: 'Plante : Notification Problème avec Sansevieria'
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - plant.sansevieria
+    to: problem
+  - platform: time
+    at: '20:00:00'
+  condition:
+  - condition: state
+    entity_id: plant.sansevieria
+    state: problem
+  action:
+  - service: notify.mobile_app_iphone_de_paulj
+    metadata: {}
+    data:
+      title: "Problème Sansevieria \U0001F33F⚠️"
+      message: 'Problème sur '
   mode: single
