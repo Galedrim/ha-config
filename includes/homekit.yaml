@@ -22,6 +22,7 @@ filter:
     - person
     - plant
     - remote
+    - select
     - script
     - sensor
     - sun
@@ -32,34 +33,17 @@ filter:
     - zone
   include_entities:
     - input_boolean.alarm_clock
-    - light.chambre_a_coucher
+    - light.lampe_chambre
     - light.salon
-    - media_player.chambre
-    - media_player.salon_2
     - script.demarrer_toutes_zones_aspirateur
-    - script.demarrer_tv_plex
-    - script.demarrer_tv_twitch
-    - script.demarrer_tv_youtube
     - switch.bot_3481
 entity_config:
   input_boolean.alarm_clock:
     name: Alarme
-  light.chambre_a_coucher:
+  light.lampe_chambre:
     name: Chambre
   light.salon:
     name: Salon
-  media_player.chambre:
-    name: Nest Mini
-    feature_list:
-      - feature: on_off
-      - feature: toggle_mute
-  media_player.salon_2:
-    name: TV
-    feature_list:
-      - feature: on_off
-      - feature: play_pause
-      - feature: play_stop
-      - feature: toggle_mute
   scene.salon_attenue:
     name: Atténué
   scene.salon_detente:
@@ -74,11 +58,5 @@ entity_config:
     name: Tokyo
   script.demarrer_toutes_zones_aspirateur:
     name: Aspirateur
-  script.demarrer_tv_plex:
-    name: Plex
-  script.demarrer_tv_twitch:
-    name: Twitch
-  script.demarrer_tv_youtube:
-    name: Youtube
   switch.bot_3481:
     name: Cafetière
