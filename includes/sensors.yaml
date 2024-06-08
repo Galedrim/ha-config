@@ -24,26 +24,26 @@
     half_hour_before_alarm:
       friendly_name: Half an hour before alarm
       value_template: >
-        {% set t_alarm = state_attr("input_datetime.alarm_clock", "timestamp") | int %}
-        {% set t_start = states("sensor.timestamp_start_of_today") | int %}
+        {% set t_alarm = state_attr("input_datetime.alarm_clock", "timestamp") | int(0) %}
+        {% set t_start = states("sensor.timestamp_start_of_today") | int(0) %}
         {% set half_hour_before_alarm = t_alarm + t_start - 60 * 30 %}
         {{ half_hour_before_alarm | timestamp_custom("%H:%M", True) }}
 
     ten_minutes_before_alarm:
       friendly_name: Ten minutes before alarm
       value_template: >
-        {% set t_alarm = state_attr("input_datetime.alarm_clock", "timestamp") | int %}
-        {% set t_start = states("sensor.timestamp_start_of_today") | int %}
+        {% set t_alarm = state_attr("input_datetime.alarm_clock", "timestamp") | int(0) %}
+        {% set t_start = states("sensor.timestamp_start_of_today") | int(0) %}
         {% set before_alarm = t_alarm + t_start - 60 * 10 %}
         {{ before_alarm | timestamp_custom("%H:%M", True) }}
 
-    robot_vacuum_last_clean_duration:
-      unit_of_measurement: s
-      value_template: >
-        {% set t_start = state_attr("input_datetime.vacuum_on", "timestamp") | int %}
-        {% set t_off = state_attr("input_datetime.vacuum_off", "timestamp") | int %}
-        {% set duration = t_off - t_start %}
-        {{ duration }}
+    # robot_vacuum_last_clean_duration:
+    #   unit_of_measurement: s
+    #   value_template: >
+    #     {% set t_start = state_attr("input_datetime.vacuum_on", "timestamp") | int %}
+    #     {% set t_off = state_attr("input_datetime.vacuum_off", "timestamp") | int %}
+    #     {% set duration = t_off - t_start %}
+    #     {{ duration }}
 
 #   ___  _   _
 #  / _ \| |_| |__   ___ _ __ ___
