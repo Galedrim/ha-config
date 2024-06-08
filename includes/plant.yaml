@@ -8,12 +8,12 @@
 #
 sansevieria:
   sensors:
-    moisture: sensor.mi_flora_sansevieria_moisture
-    battery: sensor.mi_flora_sansevieria_battery
-    temperature: sensor.mi_flora_sansevieria_temperature
-    conductivity: sensor.mi_flora_sansevieria_conductivity
-    brightness: sensor.mi_flora_sansevieria_illuminance
-  min_moisture: 15
+    moisture: sensor.plant_sensor_25cf_moisture
+    battery: sensor.plant_sensor_25cf_battery
+    temperature: sensor.plant_sensor_25cf_temperature
+    conductivity: sensor.plant_sensor_25cf_conductivity
+    brightness: sensor.plant_sensor_25cf_illuminance
+  min_moisture: 10
   max_moisture: 60
   min_conductivity: 0
   max_conductivity: 1000
