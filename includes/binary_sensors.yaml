@@ -13,8 +13,7 @@
     motion_detected:
       friendly_name: Any motion detected
       value_template: >
-        {{ is_state("binary_sensor.activity_in_bedroom", "on")
-            or is_state("binary_sensor.activity_in_corridor", "on")
+        {{ is_state("binary_sensor.activity_in_corridor", "on")
             or is_state("binary_sensor.activity_in_living_room", "on") }}
 
     motion_detected_in_last_hour:
@@ -23,11 +22,20 @@
         {{ is_state("binary_sensor.motion_detected", "on") }}
       delay_off: "01:00:00"
 
+    someone_in_the_house:
+      friendly_name: Someone in the house
+      value_template: >
+        {{ is_state("binary_sensor.motion_detected", "on")
+            or is_state("person.galedrim", "home")
+            or is_state("activity_in_bedroom", "on") }}
+
     someone_in_the_house_in_last_hour:
       friendly_name: Someone in the house in the last hour
       value_template: >
-        {{ is_state("binary_sensor.motion_detected_in_last_hour", "on")
-            or is_state("person.galedrim", "home") }}
+        {{ is_state("binary_sensor.motion_detected", "on")
+            or is_state("person.galedrim", "home") 
+            or is_state("activity_in_bedroom", "on") }}
+      delay_off: "01:00:00"
 
     activity_in_corridor:
       friendly_name: Activity in the corridor
@@ -64,6 +72,11 @@
         {% set pc_on = is_state("switch.pc", "on") %}
         {{ light_on or tv_on or pc_on }}
 
+    no_one_home:
+      friendly_name: No one is home
+      value_template: >
+        {{ not is_state("person.galedrim", "home") }}
+
     vacuum_day:
       friendly_name: Vacuum day today
       value_template: >
@@ -87,8 +100,3 @@
         {% else %}
           false
         {% endif %}
-
-    no_one_home:
-      friendly_name: No one is home
-      value_template: >
-        {{ not is_state("person.galedrim", "home") }}
