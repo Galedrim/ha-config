@@ -14,14 +14,13 @@
     data: {}
   mode: single
 - id: '1705440915802'
-  alias: 'PC : Allumer au réveil'
+  alias: 'PC : Allumer automatiquement au réveil'
   description: ''
   trigger:
   - platform: state
     entity_id:
     - input_boolean.sleep_mode
     to: 'off'
-    from: 'on'
   condition:
   - condition: state
     entity_id: input_boolean.guest_mode
@@ -40,7 +39,7 @@
       entity_id: switch.pc
   mode: single
 - id: '1705441264950'
-  alias: 'Vacation Mode : Démarrer Automatiquement'
+  alias: 'Vacation Mode : Activer'
   description: ''
   trigger:
   - platform: state
@@ -68,7 +67,7 @@
       message: Personne dans la maison depuis24h, changement en "Vacation Mode"
   mode: single
 - id: '1705441394367'
-  alias: 'Vacation Mode : Eteindre automatiquement'
+  alias: 'Vacation Mode : Désactiver'
   description: ''
   trigger:
   - platform: state
@@ -112,6 +111,9 @@
       datetime: '{{ now().isoformat() }}'
     target:
       entity_id: input_datetime.vacuum_on
+  - condition: state
+    entity_id: person.galedrim
+    state: not_home
   - service: notify.mobile_app_iphone_de_paulj
     data:
       title: Robot Aspirateur
@@ -139,6 +141,9 @@
       datetime: '{{ now().isoformat() }}'
     target:
       entity_id: input_datetime.vacuum_off
+  - condition: state
+    entity_id: person.galedrim
+    state: not_home
   - service: notify.mobile_app_iphone_de_paulj
     metadata: {}
     data:
@@ -181,7 +186,7 @@
     data: {}
   mode: single
 - id: '1705442385080'
-  alias: 'Aspirateur : Nettoyage Reset'
+  alias: 'Aspirateur : Reset'
   description: ''
   trigger:
   - platform: time
@@ -216,7 +221,7 @@
       entity_id: input_datetime.pc_off
   mode: single
 - id: '1705442602863'
-  alias: 'PC : Démarrage Effectué'
+  alias: 'PC : Allumage Effectué'
   description: ''
   trigger:
   - platform: state
@@ -262,9 +267,12 @@
     data: {}
   mode: single
 - id: '1705443451025'
-  alias: 'Réveil : Allumer Nest et Lumières Graduellement'
+  alias: 'Réveil : Allumer'
   description: ''
   trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time")[0:5] == states("sensor.half_hour_before_alarm")
+      }}'
   - platform: template
     value_template: '{{ states("sensor.time")[0:5] == states("sensor.ten_minutes_before_alarm")
       }}'
@@ -272,9 +280,6 @@
   - condition: state
     entity_id: input_boolean.alarm_clock
     state: 'on'
-  - condition: state
-    entity_id: input_boolean.alarm_sounded_today
-    state: 'off'
   - condition: state
     entity_id: binary_sensor.alarm_day
     state: 'on'
@@ -288,34 +293,26 @@
   - service: script.allumer_reveil
     metadata: {}
     data: {}
-  - service: input_boolean.turn_on
-    data: {}
-    target:
-      entity_id: input_boolean.alarm_sounded_today
-  - service: automation.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: automation.reveil_redemarrer_si_pas_debout
   mode: single
 - id: '1705444083342'
-  alias: 'Réveil : Eteindre si activité dans couloir'
+  alias: 'Réveil : Eteindre automatiquement'
   description: ''
   trigger:
   - platform: state
     entity_id:
     - binary_sensor.activity_in_corridor
     to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
   condition:
   - condition: state
     entity_id: light.lampe_chambre
     state: 'on'
   action:
-  - service: light.turn_off
-    metadata: {}
+  - service: script.eteindre_lumiere_chambre
     data: {}
-    target:
-      entity_id: light.chambre_a_coucher
   - service: script.eteindre_reveil
     metadata: {}
     data: {}
@@ -324,12 +321,6 @@
     data: {}
     target:
       entity_id: script.allumer_nest_mini_graduellement
-  - service: automation.turn_off
-    target:
-      entity_id:
-      - automation.reveil_redemarrer_si_pas_debout
-    data:
-      stop_actions: true
   mode: single
 - id: '1705444466577'
   alias: 'Lumières : Allumer si porte ouverte'
@@ -361,14 +352,13 @@
       entity_id: light.salon
   mode: single
 - id: '1705445702418'
-  alias: 'Cafetière : Allumer au réveil'
+  alias: 'Cafetière : Allumer automatiquement au réveil'
   description: ''
   trigger:
   - platform: state
     entity_id:
     - input_boolean.sleep_mode
     to: 'off'
-    from: 'on'
   condition:
   - condition: state
     entity_id: input_boolean.guest_mode
@@ -389,13 +379,17 @@
       entity_id: input_boolean.coffeemaker_started_today
   mode: single
 - id: '1705445987483'
-  alias: 'Sleep Mode : Démarrer automatiquement'
+  alias: 'Sleep Mode : Activer'
   description: ''
   trigger:
   - platform: state
     entity_id:
     - binary_sensor.activity_in_bedroom
     to: 'on'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
   condition:
   - condition: state
     entity_id: input_boolean.sleep_mode
@@ -404,7 +398,7 @@
     entity_id: input_boolean.vacation_mode
     state: 'off'
   - condition: time
-    after: '21:00:00'
+    after: '20:00:00'
     before: 07:00:00
   action:
   - service: input_boolean.turn_on
@@ -413,7 +407,7 @@
     data: {}
   mode: single
 - id: '1705446144156'
-  alias: 'Cafetière : Démarrage Reset'
+  alias: 'Cafetière : Reset'
   description: ''
   trigger:
   - platform: time
@@ -425,42 +419,6 @@
     data: {}
     target:
       entity_id: input_boolean.coffeemaker_started_today
-  mode: single
-- id: '1705503211146'
-  alias: 'Sleep Mode : Éteindre automatiquement'
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.activity_in_corridor
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: input_boolean.vacation_mode
-    state: 'off'
-  - condition: state
-    entity_id: input_boolean.guest_mode
-    state: 'off'
-  - condition: time
-    after: 07:00:00
-    before: '21:00:00'
-  action:
-  - service: input_boolean.turn_off
-    target:
-      entity_id:
-      - input_boolean.sleep_mode
-    data: {}
-  mode: single
-- id: '1705504657705'
-  alias: 'Réveil : Redémarrer toutes les 5 minutes'
-  description: ''
-  trigger:
-  - platform: time_pattern
-    minutes: /5
-  condition: []
-  action:
-  - service: script.allumer_nest_mini_instantanement
-    data: {}
   mode: single
 - id: '1708603692401'
   alias: 'Lumières : Eteindre si dormir'
@@ -485,41 +443,66 @@
     target:
       entity_id: light.salon
   mode: single
-- id: '1717426309232'
-  alias: 'Réveil : Démarrage Reset'
-  description: ''
-  trigger:
-  - platform: time
-    at: 00:00:00
-  condition:
-  - condition: state
-    entity_id: input_boolean.alarm_sounded_today
-    state: 'on'
-  action:
-  - service: input_boolean.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: input_boolean.alarm_sounded_today
-  mode: single
-- id: '1717430695623'
-  alias: 'Plante : Notification Problème avec Sansevieria'
+- id: '1720722772151'
+  alias: 'Sleep Mode : Désactiver'
   description: ''
   trigger:
   - platform: state
     entity_id:
-    - plant.sansevieria
-    to: problem
-  - platform: time
-    at: '20:00:00'
+    - binary_sensor.activity_in_corridor
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
   condition:
   - condition: state
-    entity_id: plant.sansevieria
-    state: problem
+    entity_id: input_boolean.sleep_mode
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.vacation_mode
+    state: 'off'
+  - condition: time
+    after: 07:00:00
+    before: '20:00:00'
   action:
-  - service: notify.mobile_app_iphone_de_paulj
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.sleep_mode
+    data: {}
+  mode: single
+- id: '1722904766513'
+  alias: 'Réveil : Eteindre manuellement'
+  description: ''
+  trigger:
+  - event_type: ios.action_fired
+    event_data:
+      actionID: FDDF9B74-3BCD-4A8F-BC22-BB2EA21BC27A
+    platform: event
+  condition: []
+  action:
+  - service: script.eteindre_reveil
     metadata: {}
-    data:
-      title: "Problème Sansevieria \U0001F33F⚠️"
-      message: 'Problème sur '
+    data: {}
+  - service: script.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: script.allumer_nest_mini_graduellement
+  mode: single
+- id: '1722905034236'
+  alias: 'PC : Allumer manuellement'
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ios.action_fired
+    event_data:
+      actionID: 5EC8B003-E071-49D0-ABE9-9E88629C3063
+  condition: []
+  action:
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.pc
   mode: single

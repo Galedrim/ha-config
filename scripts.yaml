@@ -1,5 +1,5 @@
 eteindre_reveil:
-  alias: Éteindre Nest Mini
+  alias: Éteindre Nest Mini Chambre
   sequence:
   - service: media_player.volume_set
     metadata: {}
@@ -18,6 +18,7 @@ eteindre_reveil:
     target:
       entity_id: media_player.chambre
   mode: single
+  description: ''
 test:
   alias: Démarrer Aspirateur Zones
   sequence:
@@ -371,8 +372,7 @@ allumer_cafetiere:
   sequence:
   - service: switch.toggle
     target:
-      entity_id:
-      - switch.bot_3481
+      entity_id: switch.bot_3481
     data: {}
   - service: input_datetime.set_datetime
     metadata: {}
@@ -395,3 +395,12 @@ allumer_lumiere_graduellement:
       entity_id: light.lampe_chambre
   mode: single
   icon: mdi:lightbulb-on
+eteindre_lumiere_chambre:
+  alias: Éteindre Lumière Chambre
+  sequence:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.lampe_chambre
+  description: ''
