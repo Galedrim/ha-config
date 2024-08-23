@@ -2,79 +2,58 @@
 views:
 - cards:
   - cards:
-    - title: Modes
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: person.galedrim
-        layout: horizontal
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.sleep_mode
-        layout: horizontal
-        name: Nuit
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      type: horizontal-stack
-    - cards:
-      - entity: input_boolean.guest_mode
-        name: Invité
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      - entity: input_boolean.vacation_mode
-        name: Vacance
-        tap_action:
-          action: toggle
-        type: custom:mushroom-entity-card
-      type: horizontal-stack
-    type: vertical-stack
-  - cards:
-    - title: Salon
-      type: custom:mushroom-title-card
-    - cards:
-      - entity: light.salon
-        name: Lumières
-        show_brightness_control: true
-        type: custom:mushroom-light-card
-        use_light_color: true
-      - entity: input_select.living_room_color
-        icon_color: accent
-        name: Scènes
-        secondary_info: none
-        tap_action:
-          action: call-service
-          service: script.1705435245310
-          target: {}
-        type: custom:mushroom-select-card
-      type: horizontal-stack
-    - cards:
-      - entity: media_player.salon_2
-        fill_container: false
-        media_controls:
-        - on_off
-        name: TV
-        type: custom:mushroom-media-player-card
-        volume_controls:
-        - volume_mute
-      - entity: input_select.tv_app
-        icon_color: deep-purple
-        name: Chaînes
-        secondary_info: none
-        tap_action:
-          action: call-service
-          service: script.demarrer_chaines_tv
-          target: {}
-        type: custom:mushroom-select-card
-      type: horizontal-stack
+    - animated_icon: false
+      date_pattern: cccc, d.MM.yy
+      entity: weather.forecast_maison
+      hide_forecast_section: true
+      hide_today_section: false
+      locale: fr-FR
+      sun_entity: sun.sun
+      time_format: 24
+      time_pattern: HH:mm
+      type: custom:clock-weather-card
+      weather_icon_type: fill
     type: vertical-stack
   - cards:
     - title: Chambre
       type: custom:mushroom-title-card
     - cards:
-      - entity: media_player.chambre
+      - color_thresholds:
+        - color: '#f39c12'
+          value: 18
+        - color: '#d35400'
+          value: 19
+        - color: '#c0392b'
+          value: 20
+        entities:
+        - sensor.meter_plus_857f
+        name: Temperature
+        show:
+          icon: false
+        type: custom:mini-graph-card
+      - color_thresholds:
+        - color: '#f39c12'
+          value: 40
+        - color: '#d35400'
+          value: 50
+        - color: '#c0392b'
+          value: 60
+        entities:
+        - sensor.meter_plus_857f_humidite
+        name: Humidité
+        show:
+          icon: false
+        type: custom:mini-graph-card
+      type: horizontal-stack
+    - cards:
+      - double_tap_action:
+          action: none
+        entity: media_player.chambre
+        hold_action:
+          action: none
         media_controls: []
         tap_action:
-          action: toggle
+          action: none
         type: custom:mushroom-media-player-card
         volume_controls: []
       - collapsible_controls: false
@@ -96,8 +75,8 @@ views:
       - entity: input_datetime.alarm_clock
         icon_color: deep-purple
         name: Heure
-        primary_info: state
-        secondary_info: name
+        primary_info: name
+        secondary_info: state
         type: custom:mushroom-entity-card
       type: horizontal-stack
     - cards:
@@ -168,7 +147,102 @@ views:
       type: horizontal-stack
     type: vertical-stack
   - cards:
-    - title: Equipements
+    - title: Modes
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: person.galedrim
+        layout: horizontal
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.sleep_mode
+        layout: horizontal
+        name: Nuit
+        secondary_info: last-updated
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    - cards:
+      - entity: input_boolean.guest_mode
+        name: Invité
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      - entity: input_boolean.vacation_mode
+        name: Vacance
+        tap_action:
+          action: toggle
+        type: custom:mushroom-entity-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Salon
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: light.salon
+        name: Lumières
+        show_brightness_control: true
+        type: custom:mushroom-light-card
+        use_light_color: true
+      - entity: input_select.living_room_color
+        icon_color: deep-purple
+        name: Scènes
+        secondary_info: last-updated
+        tap_action:
+          action: call-service
+          service: script.1705435245310
+          target: {}
+        type: custom:mushroom-select-card
+      type: horizontal-stack
+    - cards:
+      - entity: media_player.salon_2
+        fill_container: false
+        media_controls:
+        - on_off
+        name: TV
+        type: custom:mushroom-media-player-card
+        volume_controls:
+        - volume_mute
+      - entity: input_select.tv_app
+        icon_color: deep-purple
+        name: Chaînes
+        secondary_info: last-updated
+        tap_action:
+          action: call-service
+          service: script.demarrer_chaines_tv
+          target: {}
+        type: custom:mushroom-select-card
+      type: horizontal-stack
+    - cards:
+      - double_tap_action:
+          action: none
+        entity: switch.pc
+        hold_action:
+          action: none
+        secondary_info: last-updated
+        tap_action:
+          action: perform-action
+          perform_action: switch.turn_on
+        type: custom:mushroom-entity-card
+      - badge_color: ''
+        badge_icon: ''
+        double_tap_action:
+          action: none
+        entity: plant.sansevieria
+        hold_action:
+          action: none
+        icon: mdi:flower
+        icon_color: "{% if states(\"plant.sansevieria\") == 'problem' %}\n  red\n\
+          {% endif %}"
+        primary: Plante
+        secondary: "{% if states(\"plant.sansevieria\") == 'problem' %}\n  {{ state_attr(\"\
+          plant.sansevieria\", \"problem\") }}\n{% else %}\n  OK\n{% endif %}"
+        tap_action:
+          action: none
+        type: custom:mushroom-template-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Cuisine
       type: custom:mushroom-title-card
     - cards:
       - icon: mdi:coffee-maker
@@ -182,86 +256,23 @@ views:
           target: {}
         type: custom:mushroom-template-card
       - entity: sensor.marin_echo_next_timer
-        name: Echo
+        name: Timer
         type: custom:mushroom-entity-card
       type: horizontal-stack
-    - cards:
-      - double_tap_action:
-          action: none
-        entity: switch.pc
-        hold_action:
-          action: none
-        tap_action:
-          action: call-service
-          service: switch.turn_on
-          target:
-            entity_id: switch.pc
-        type: custom:mushroom-entity-card
-      - entity: binary_sensor.rpi_power_status
-        name: Serveur
-        type: custom:mushroom-entity-card
-      type: horizontal-stack
-    type: vertical-stack
-  - cards:
-    - title: Température
-      type: custom:mushroom-title-card
-    - animated_icon: false
-      date_pattern: cccc, d.MM.yy
-      entity: weather.forecast_maison
-      hide_forecast_section: true
-      hide_today_section: false
-      locale: fr-FR
-      sun_entity: sun.sun
-      time_format: 24
-      time_pattern: HH:mm
-      type: custom:clock-weather-card
-      weather_icon_type: fill
-    - cards:
-      - color_thresholds:
-        - color: '#f39c12'
-          value: 18
-        - color: '#d35400'
-          value: 19
-        - color: '#c0392b'
-          value: 20
-        entities:
-        - sensor.meter_plus_857f
-        name: Temp. Chambre
-        show:
-          icon: false
-        type: custom:mini-graph-card
-      - color_thresholds:
-        - color: '#f39c12'
-          value: 40
-        - color: '#d35400'
-          value: 50
-        - color: '#c0392b'
-          value: 60
-        entities:
-        - sensor.meter_plus_857f_humidite
-        name: Hum. Chambre
-        show:
-          icon: false
-        type: custom:mini-graph-card
-      type: horizontal-stack
-    type: vertical-stack
-  - cards:
-    - title: Aspirateur
-      type: custom:mushroom-title-card
     - cards:
       - commands:
         - start_pause
         - return_home
         entity: vacuum.rockrobo
-        name: Robot
-        primary_info: state
-        secondary_info: none
+        name: Aspirateur
+        primary_info: name
+        secondary_info: state
         type: custom:mushroom-vacuum-card
       - entity: input_select.vacuum_zone
         icon: mdi:vacuum
         icon_color: deep-purple
         name: Zone
-        secondary_info: none
+        secondary_info: last-changed
         tap_action:
           action: call-service
           service: script.test
@@ -284,6 +295,46 @@ views:
           1))) / 86400) | int(0) }} jours'
         tap_action:
           action: none
+        type: custom:mushroom-template-card
+      type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: Batteries
+      type: custom:mushroom-title-card
+    - cards:
+      - entity: sensor.bot_3481_batterie
+        icon: mdi:battery
+        icon_color: "{% if states(\"sensor.bot_3481_batterie\") | int < 10 %}\n  red\n\
+          {% elif states(\"sensor.bot_3481_batterie\") | int < 20 %}\n  orange\n{%\
+          \ endif %}"
+        primary: Bot
+        secondary: '{{ states("sensor.bot_3481_batterie") }} %'
+        type: custom:mushroom-template-card
+      - entity: sensor.contact_sensor_b103_batterie
+        icon: mdi:battery
+        icon_color: "{% if states(\"sensor.contact_sensor_b103_batterie\") | int <\
+          \ 10 %}\n  red\n{% elif states(\"sensor.contact_sensor_b103_batterie\")\
+          \ | int < 20 %}\n  orange\n{% endif %}"
+        primary: Contact
+        secondary: '{{ states("sensor.contact_sensor_b103_batterie") }} %'
+        type: custom:mushroom-template-card
+      type: horizontal-stack
+    - cards:
+      - entity: sensor.meter_plus_857f_batterie
+        icon: mdi:battery
+        icon_color: "{% if states(\"sensor.meter_plus_857f_batterie\") | int < 10\
+          \ %}\n  red\n{% elif states(\"sensor.meter_plus_857f_batterie\") | int <\
+          \ 20 %}\n  orange\n{% endif %}"
+        primary: Meter Plus
+        secondary: '{{ states("sensor.meter_plus_857f_batterie") }} %'
+        type: custom:mushroom-template-card
+      - entity: sensor.motion_sensor_9821_batterie
+        icon: mdi:battery
+        icon_color: "{% if states(\"sensor.motion_sensor_9821_batterie\") | int <\
+          \ 10 %}\n  red\n{% elif states(\"sensor.motion_sensor_9821_batterie\") |\
+          \ int < 20 %}\n  orange\n{% endif %}"
+        primary: Motion
+        secondary: '{{ states("sensor.motion_sensor_9821_batterie") }} %'
         type: custom:mushroom-template-card
       type: horizontal-stack
     type: vertical-stack
