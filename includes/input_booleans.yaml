@@ -12,10 +12,6 @@ vacuum_cleaned_today:
   name: Vacuum cleaned today
   icon: mdi:broom
 
-alarm_sounded_today:
-  name: Alarm sounded today
-  icon: mdi:alarm-check
-
 coffeemaker_started_today:
   name: Coffeemaker started today
   icon: mdi:coffee-maker

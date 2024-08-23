@@ -56,15 +56,14 @@
     entity_id: input_boolean.guest_mode
     state: 'off'
   action:
-  - service: input_boolean.turn_on
-    data: {}
+  - data: {}
     target:
       entity_id: input_boolean.vacation_mode
-  - service: notify.mobile_app_iphone_de_paulj
-    metadata: {}
+    action: input_boolean.turn_on
+  - metadata: {}
     data:
-      title: Vacation Mode
-      message: Personne dans la maison depuis24h, changement en "Vacation Mode"
+      title: VACATION MODE ACTIVE
+    action: notify.mobile_app_iphone_de_paulj
   mode: single
 - id: '1705441394367'
   alias: 'Vacation Mode : Désactiver'
@@ -83,16 +82,15 @@
     entity_id: input_boolean.vacation_mode
     state: 'on'
   action:
-  - service: input_boolean.turn_off
-    metadata: {}
+  - metadata: {}
     data: {}
     target:
       entity_id: input_boolean.vacation_mode
-  - service: notify.mobile_app_iphone_de_paulj
-    metadata: {}
+    action: input_boolean.turn_off
+  - metadata: {}
     data:
-      title: Vacation Mode
-      message: Bon Retour ! Arrêt du "Vacation Mode"
+      title: VACATION MODE DESACTIVE
+    action: notify.mobile_app_iphone_de_paulj
   mode: single
 - id: '1705441556131'
   alias: 'Aspirateur : Nettoyage Démarré'
@@ -271,9 +269,6 @@
   description: ''
   trigger:
   - platform: template
-    value_template: '{{ states("sensor.time")[0:5] == states("sensor.half_hour_before_alarm")
-      }}'
-  - platform: template
     value_template: '{{ states("sensor.time")[0:5] == states("sensor.ten_minutes_before_alarm")
       }}'
   condition:
@@ -283,16 +278,24 @@
   - condition: state
     entity_id: binary_sensor.alarm_day
     state: 'on'
-  - condition: state
-    entity_id: input_boolean.sleep_mode
-    state: 'on'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.withings_in_bed
+      state: 'on'
+    - condition: state
+      entity_id: binary_sensor.withings_in_bed
+      state: unknown
+    - condition: state
+      entity_id: binary_sensor.withings_in_bed
+      state: unavailable
   action:
-  - service: script.allumer_lumiere_graduellement
-    metadata: {}
+  - metadata: {}
     data: {}
-  - service: script.allumer_reveil
-    metadata: {}
+    action: script.allumer_lumiere_graduellement
+  - metadata: {}
     data: {}
+    action: script.allumer_reveil
   mode: single
 - id: '1705444083342'
   alias: 'Réveil : Eteindre automatiquement'
@@ -401,10 +404,10 @@
     after: '20:00:00'
     before: 07:00:00
   action:
-  - service: input_boolean.turn_on
-    target:
+  - target:
       entity_id: input_boolean.sleep_mode
     data: {}
+    action: input_boolean.turn_on
   mode: single
 - id: '1705446144156'
   alias: 'Cafetière : Reset'
@@ -421,7 +424,7 @@
       entity_id: input_boolean.coffeemaker_started_today
   mode: single
 - id: '1708603692401'
-  alias: 'Lumières : Eteindre si dormir'
+  alias: 'Lumières : Eteindre automatiquement'
   description: ''
   trigger:
   - platform: state
@@ -429,6 +432,14 @@
     - input_boolean.sleep_mode
     to: 'on'
     from: 'off'
+  - platform: state
+    entity_id:
+    - binary_sensor.activity_in_living_room
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
   condition:
   - condition: state
     entity_id: input_boolean.guest_mode
@@ -437,11 +448,11 @@
     entity_id: input_boolean.vacation_mode
     state: 'off'
   action:
-  - service: light.turn_off
-    metadata: {}
+  - metadata: {}
     data: {}
     target:
       entity_id: light.salon
+    action: light.turn_off
   mode: single
 - id: '1720722772151'
   alias: 'Sleep Mode : Désactiver'
@@ -453,8 +464,8 @@
     to: 'on'
     for:
       hours: 0
-      minutes: 0
-      seconds: 30
+      minutes: 1
+      seconds: 0
   condition:
   - condition: state
     entity_id: input_boolean.sleep_mode
@@ -466,43 +477,30 @@
     after: 07:00:00
     before: '20:00:00'
   action:
-  - service: input_boolean.turn_off
-    target:
+  - target:
       entity_id: input_boolean.sleep_mode
     data: {}
+    action: input_boolean.turn_off
   mode: single
-- id: '1722904766513'
-  alias: 'Réveil : Eteindre manuellement'
+- id: '1724455110657'
+  alias: 'Réveil : Notifier si absent'
   description: ''
   trigger:
-  - event_type: ios.action_fired
-    event_data:
-      actionID: FDDF9B74-3BCD-4A8F-BC22-BB2EA21BC27A
-    platform: event
-  condition: []
+  - platform: device
+    device_id: 8e10f31f24c573de482e169a2eadbde8
+    domain: media_player
+    entity_id: d73c395bbc96fc47878006d5f8bb3e44
+    type: playing
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  condition:
+  - condition: state
+    entity_id: binary_sensor.no_one_home
+    state: 'on'
   action:
-  - service: script.eteindre_reveil
-    metadata: {}
-    data: {}
-  - service: script.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: script.allumer_nest_mini_graduellement
-  mode: single
-- id: '1722905034236'
-  alias: 'PC : Allumer manuellement'
-  description: ''
-  trigger:
-  - platform: event
-    event_type: ios.action_fired
-    event_data:
-      actionID: 5EC8B003-E071-49D0-ABE9-9E88629C3063
-  condition: []
-  action:
-  - service: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.pc
+  - action: notify.mobile_app_iphone_de_paulj
+    data:
+      message: ALARME ENCLENCHE
   mode: single

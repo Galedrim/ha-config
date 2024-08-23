@@ -245,21 +245,20 @@ demarrer_lovelace_to_yaml:
 allumer_reveil:
   alias: Allumer Nest Mini Chambre Graduellement
   sequence:
-  - service: media_player.turn_on
-    metadata: {}
+  - metadata: {}
     data: {}
     target:
       entity_id: media_player.chambre
-  - service: media_player.shuffle_set
-    metadata: {}
+    action: media_player.turn_on
+  - metadata: {}
     data:
       shuffle: true
     target:
       entity_id: media_player.ytube_music_nest_mini
-  - service: media_player.play_media
-    metadata:
-      title: LOFI
-      thumbnail:
+    action: media_player.shuffle_set
+  - metadata:
+      title: Réveil
+      thumbnail: ''
       media_class: playlist
       children_media_class: track
       navigateIds:
@@ -273,61 +272,57 @@ allumer_reveil:
       media_content_type: playlist
     target:
       entity_id: media_player.ytube_music_nest_mini
-  - service: media_player.volume_set
-    metadata: {}
+    action: media_player.play_media
+  - metadata: {}
     data:
       volume_level: 0.2
     target:
       entity_id: media_player.ytube_music_nest_mini
+    action: media_player.volume_set
   - delay:
       hours: 0
-      minutes: 1
+      minutes: 2
       seconds: 0
       milliseconds: 0
-  - service: media_player.volume_set
-    metadata: {}
+  - metadata: {}
     data:
       volume_level: 0.3
     target:
       entity_id: media_player.ytube_music_nest_mini
+    action: media_player.volume_set
   - delay:
       hours: 0
-      minutes: 1
+      minutes: 2
       seconds: 0
       milliseconds: 0
-  - service: media_player.volume_set
-    metadata: {}
+  - metadata: {}
     data:
       volume_level: 0.4
     target:
       entity_id: media_player.ytube_music_nest_mini
+    action: media_player.volume_set
   - delay:
       hours: 0
-      minutes: 1
+      minutes: 2
       seconds: 0
       milliseconds: 0
-  - service: media_player.volume_set
-    metadata: {}
+  - metadata: {}
     data:
       volume_level: 0.5
     target:
       entity_id: media_player.ytube_music_nest_mini
+    action: media_player.volume_set
   - delay:
       hours: 0
-      minutes: 1
+      minutes: 2
       seconds: 0
       milliseconds: 0
-  - service: media_player.volume_set
-    metadata: {}
+  - metadata: {}
     data:
       volume_level: 0.6
     target:
       entity_id: media_player.ytube_music_nest_mini
-  - delay:
-      hours: 0
-      minutes: 1
-      seconds: 0
-      milliseconds: 0
+    action: media_player.volume_set
   mode: single
 allumer_nest_mini_instantanement:
   alias: Allumer Nest Mini Chambre Instantanément
