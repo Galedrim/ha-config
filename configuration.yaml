@@ -30,7 +30,6 @@ logger: !include includes/logger.yaml
 
 # Others
 binary_sensor: !include includes/binary_sensors.yaml
-homekit: !include includes/homekit.yaml
 http: !include includes/http.yaml
 plant: !include includes/plant.yaml
 sensor: !include includes/sensors.yaml
