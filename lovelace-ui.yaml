@@ -221,7 +221,10 @@ views:
         secondary_info: last-updated
         tap_action:
           action: perform-action
+          data: {}
           perform_action: switch.turn_on
+          target:
+            entity_id: switch.pc
         type: custom:mushroom-entity-card
       - badge_color: ''
         badge_icon: ''
@@ -255,8 +258,10 @@ views:
           service: script.allumer_cafetiere
           target: {}
         type: custom:mushroom-template-card
-      - entity: sensor.marin_echo_next_timer
-        name: Timer
+      - entity: switch.cookeo
+        icon: mdi:chef-hat
+        tap_action:
+          action: toggle
         type: custom:mushroom-entity-card
       type: horizontal-stack
     - cards:
@@ -280,22 +285,23 @@ views:
         type: custom:mushroom-select-card
       type: horizontal-stack
     - cards:
-      - entity: binary_sensor.vacuum_day
-        name: Nettoyage
-        type: custom:mushroom-entity-card
       - double_tap_action:
           action: none
         entity: input_datetime.vacuum_off
         hold_action:
           action: none
         icon: mdi:clock
-        icon_color: ''
-        primary: Historique
+        icon_color: "{% if states(\"binary_sensor.vacuum_day\") == 'on' %}\n  blue\n\
+          {% endif %}"
+        primary: Nettoyage
         secondary: '{{ ((as_timestamp(now()) - as_timestamp(states("input_datetime.vacuum_off",
           1))) / 86400) | int(0) }} jours'
         tap_action:
           action: none
         type: custom:mushroom-template-card
+      - entity: sensor.marin_echo_next_timer
+        name: Timer
+        type: custom:mushroom-entity-card
       type: horizontal-stack
     type: vertical-stack
   - cards:
