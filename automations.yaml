@@ -278,17 +278,9 @@
   - condition: state
     entity_id: binary_sensor.alarm_day
     state: 'on'
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: binary_sensor.withings_in_bed
-      state: 'on'
-    - condition: state
-      entity_id: binary_sensor.withings_in_bed
-      state: unknown
-    - condition: state
-      entity_id: binary_sensor.withings_in_bed
-      state: unavailable
+  - condition: state
+    entity_id: binary_sensor.someone_in_the_house_in_last_hour
+    state: 'on'
   action:
   - metadata: {}
     data: {}
@@ -308,22 +300,22 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 30
+      seconds: 10
   condition:
   - condition: state
     entity_id: light.lampe_chambre
     state: 'on'
   action:
-  - service: script.eteindre_lumiere_chambre
+  - data: {}
+    action: script.eteindre_lumiere_chambre
+  - metadata: {}
     data: {}
-  - service: script.eteindre_reveil
-    metadata: {}
-    data: {}
-  - service: script.turn_off
-    metadata: {}
+    action: script.eteindre_reveil
+  - metadata: {}
     data: {}
     target:
       entity_id: script.allumer_nest_mini_graduellement
+    action: script.turn_off
   mode: single
 - id: '1705444466577'
   alias: 'Lumières : Allumer si porte ouverte'
